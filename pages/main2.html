@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<style>
+
+body {
+	background:rgb(240,240,240);
+	color:rgb(105,96,107);
+	font-weight:400;
+	font-size:22px;
+	line-height:26px;
+	font-family:'Raleway', Arial, sans-serif;
+	text-rendering:optimizeLegibility;
+	-webkit-font-smoothing:antialiased;
+}
+
+
+div.body{
+  position:fixed;
+  top:0px;
+  left:0px;
+  right:0px;
+  bottom:0px;
+	overflow:hidden;
+  -webkit-perspective: 1200px;
+  -moz-perspective: 1200px;
+  -o-perspective: 1200px;
+  perspective: 1200px;
+  -webkit-perspective-origin: 50% 50%;
+  -moz-perspective-origin: 50% 50%;
+  -o-perspective-origin: 50% 50%;
+  perspective-origin: 50% 50%;
+}
+div.pane{
+  position:absolute;
+  top:0px;
+  left:0px;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  overflow-y:scroll;
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  -o-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  -webkit-transition: all 500ms ease;
+  -moz-transition:    all 500ms ease;
+  -ms-transition:     all 500ms ease;
+  -o-transition:      all 500ms ease;
+  transition:         all 500ms ease;
+}
+div.body.archives div.pane{
+  -webkit-transform: translateZ(-800px) rotateY(55deg) translateX(-25%);
+  -moz-transform:    translateZ(-800px) rotateY(55deg) translateX(-25%);
+  -o-transform:      translateZ(-800px) rotateY(55deg) translateX(-25%);
+  transform:         translateZ(-800px) rotateY(55deg) translateX(-25%);
+}
+
+
+img.preload{
+  opacity:0;
+  -webkit-transition: opacity 700ms ease 200ms;
+  -moz-transition:    opacity 700ms ease 200ms;
+  -ms-transition:     opacity 700ms ease 200ms;
+  -o-transition:      opacity 700ms ease 200ms;
+  transition:         opacity 700ms ease 200ms;
+}
+img.preload.loaded{
+  opacity:1;
+}
+
+
+div.content:before{
+  content:'';
+  display:block;
+  position:absolute;
+  top:45px;
+  left:30px;
+  right:30px;
+  height:100%;
+  background:rgb(255,255,255);
+}
+div.content .fill{
+  /* overrides padding and fills screen */
+  overflow:hidden;
+  position:absolute;
+  top:0px;
+  left:0px;
+  right:0px;
+  height:100%;
+}
+
+
+div.content div.image{
+  background:rgb(18,18,18);
+	-webkit-transform: translate3d(0, 0, 0);
+	-moz-transform:    translate3d(0, 0, 0);
+	transform:         translate3d(0, 0, 0);
+}
+div.content:not(.notrans) div.image{
+  -webkit-transition: all 700ms ease 100ms;
+  -moz-transition:    all 700ms ease 100ms;
+  -ms-transition:     all 700ms ease 100ms;
+  -o-transition:      all 700ms ease 100ms;
+  transition:         all 700ms ease 100ms;
+}
+div.content.minify div.image{
+  top:45px;
+  left:30px;
+  right:30px;
+  height:115px;
+}
+div.content.minify:not(.notrans) div.image{
+  -webkit-transition: all 700ms ease;
+  -moz-transition:    all 700ms ease;
+  -ms-transition:     all 700ms ease;
+  -o-transition:      all 700ms ease;
+  transition:         all 700ms ease;
+}
+div.content div.image img{
+  width:100%;
+}
+
+
+div.content div.header{
+  top:45px;
+  left:30px;
+  right:30px;
+  height:calc(100% - 45px);
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-pack: center;
+  -moz-box-align: center;
+  display: box;
+  box-orient: horizontal;
+  box-pack: center;
+  box-align: center;
+}
+div.content div.header h1{
+  margin:-45px 0px 0px 0px;
+  padding:0px;
+  font-weight:400;
+  font-size:70px;
+  color:rgb(245,245,245);
+  text-align:center;
+}
+div.content:not(.notrans) div.header h1{
+  -webkit-transition: color 300ms ease 100ms;
+  -moz-transition:    color 300ms ease 100ms;
+  -ms-transition:     color 300ms ease 100ms;
+  -o-transition:      color 300ms ease 100ms;
+  transition:         color 300ms ease 100ms;
+}
+div.content.minify div.header h1{
+  color:rgb(81,71,83);
+}
+div.content.minify:not(.notrans) div.header h1{
+  -webkit-transition: color 300ms ease 200ms;
+  -moz-transition:    color 300ms ease 200ms;
+  -ms-transition:     color 300ms ease 200ms;
+  -o-transition:      color 300ms ease 200ms;
+  transition:         color 300ms ease 200ms;
+}
+
+
+div.content div.header div.trigger{
+  position:absolute;
+  bottom:0px;
+  left:50%;
+  color:rgb(255,255,255);
+	-webkit-transform: translate3d(-50%, 0, 0);
+	-moz-transform:    translate3d(-50%, 0, 0);
+	transform:         translate3d(-50%, 0, 0);
+  cursor:pointer;
+  opacity:1;
+}
+div.content:not(.notrans) div.header div.trigger{
+  -webkit-transition: opacity 400ms ease;
+  -moz-transition:    opacity 400ms ease;
+  -ms-transition:     opacity 400ms ease;
+  -o-transition:      opacity 400ms ease;
+  transition:         opacity 400ms ease;
+}
+div.content div.header div.trigger:before{
+  content:'Scroll Down or Click Here';
+  display:block;
+  max-width:130px;
+  font-size:14px;
+  text-align:center;
+  font-weight:bold;
+  line-height:19px;
+}
+div.content div.header div.trigger:after{
+  content:'\e097';
+  display:block;
+  font-size:44px;
+  font-family:'icomoon';
+  text-align:center;
+  padding:13px 0px 40px 0px;
+  line-height:44px;
+}
+div.content.minify div.header div.trigger{
+  opacity:0;
+}
+
+
+article{
+  position:absolute;
+  left:0px;
+  right:0px;
+  margin:0px 30px;
+  top:50%;
+  padding-top:45px;
+  opacity:0;
+  background:rgb(255,255,255);
+}
+div.content:not(.notrans) article{
+  -webkit-transition: opacity 600ms ease;
+  -moz-transition:    opacity 600ms ease;
+  -ms-transition:     opacity 600ms ease;
+  -o-transition:      opacity 600ms ease;
+  transition:         opacity 600ms ease;
+}
+div.content.minify article{
+  opacity:1;
+}
+div.content.minify:not(.notrans) article{
+  -webkit-transition: opacity 600ms ease 100ms;
+  -moz-transition:    opacity 600ms ease 100ms;
+  -ms-transition:     opacity 600ms ease 100ms;
+  -o-transition:      opacity 600ms ease 100ms;
+  transition:         opacity 600ms ease 100ms;
+}
+article div.frame{
+  max-width:900px;
+  margin:0px auto;
+  padding:0px 120px;
+}
+article h2{
+  margin:0px;
+  padding:250px 0px 10px 0px;
+  text-align:center;
+  font-weight:400;
+  font-size:39px;
+  color:rgb(81,71,83);
+}
+div.content:not(.notrans) article h2{
+  -webkit-transition: padding-top 500ms ease 50ms;
+  -moz-transition:    padding-top 500ms ease 50ms;
+  -ms-transition:     padding-top 500ms ease 50ms;
+  -o-transition:      padding-top 500ms ease 50ms;
+  transition:         padding-top 500ms ease 50ms;
+}
+div.content.minify article h2{
+  padding-top:10px;
+}
+div.content.minify:not(.notrans) article h2{
+  -webkit-transition: padding-top 500ms ease 100ms;
+  -moz-transition:    padding-top 500ms ease 100ms;
+  -ms-transition:     padding-top 500ms ease 100ms;
+  -o-transition:      padding-top 500ms ease 100ms;
+  transition:         padding-top 500ms ease 100ms;
+}
+article h3{
+  margin:0px;
+  padding:50px 0px 70px 0px;
+  text-align:center;
+  font-weight:400;
+  font-size:19px;
+}
+div.content:not(.notrans) article h3{
+  -webkit-transition: padding-top 500ms ease;
+  -moz-transition:    padding-top 500ms ease;
+  -ms-transition:     padding-top 500ms ease;
+  -o-transition:      padding-top 500ms ease;
+  transition:         padding-top 500ms ease;
+}
+div.content.minify article h3{
+  padding-top:10px;
+}
+div.content.minify:not(.notrans) article h3{
+  -webkit-transition: padding-top 500ms ease 150ms;
+  -moz-transition:    padding-top 500ms ease 150ms;
+  -ms-transition:     padding-top 500ms ease 150ms;
+  -o-transition:      padding-top 500ms ease 150ms;
+  transition:         padding-top 500ms ease 150ms;
+}
+article h3 strong{
+  color:rgb(81,71,83);
+}
+
+
+article p{
+  margin:0px 0px 30px 0px;
+  line-height:32px;
+}
+article p:first-of-type{
+  font-size:30px;
+  margin:0px 0px 40px 0px;
+  line-height:49px;
+}
+article blockquote{
+  padding: 9px;
+  font-style: italic;
+  font-size: 36px;
+  font-family: 'Lora', serif;
+  line-height: 50px;
+}
+article blockquote:before{
+  content:'\201C';
+}
+article blockquote:after{
+  content:'\201D';
+}
+
+
+article p.date{
+  padding:70px 0px;
+  text-align:center;
+  font-size:15px;
+}
+
+
+div.nav{
+  position:absolute;
+  top:0px;
+  line-height:45px;
+  right:30px;
+  left:30px;
+}
+div.nav *{
+  display:inline-block;
+  vertical-align:middle;
+  cursor:pointer;
+  padding:0px 12px;
+  text-decoration:none;
+  color:rgb(102,102,102);
+  font-weight:bold;
+  font-size:13px;
+}
+
+</style>
+<html lang='en'>
+<head>
+  
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+<meta name="author" content="Hunter John Larco"/>
+<meta name="description" content="The Craft of Tea Blog" />
+<meta name="keywords" content="tea, blending, how to, craft, art, the art of, mixing, diy, make your own, oolong, green, white, chai, teavana, hunter larco, leaves"/>
+
+<title>The Craft of Tea</title>
+
+<!-- **************** favicon **************** -->
+<link rel='shortcut icon' type='image/x-icon' href='/images/favicon.ico' />
+
+<!-- **************** fonts **************** -->
+<link rel='stylesheet' href='/resources/fonts/raleway/typeface.css'/>
+<link rel='stylesheet' href='/resources/fonts/icomoon/typeface.css'/>
+
+<!-- **************** stylesheets **************** -->
+<link rel='stylesheet' href='/resources/css/reset.css'/>
+
+<!-- **************** scripts **************** -->
+<script type='text/javascript' src="/resources/scripts/classie.js"></script>
+
+</head>
+<body>
+
+
+<div class='body' id='body'>
+  <div class='pane'>
+    
+    
+    <div class='content' id='scrollercontent'>
+      <div class='nav'>
+        <div id='navarchives'>archives</div>
+        <div>about me</div>
+        <a target='blank' href='mailto:hjlarco@gmail.com'>contact</a>
+      </div>
+      <div class='fill image'>
+        <img data-src='/images/cover.jpg' class='preload' id='background'/>
+      </div>
+      <article>
+        <div class='frame'>
+          <h2>An Exploration of Tea Blending</h2>
+          <h3>by <strong>Hunter Larco</strong> &#8212; founded on <strong>September 2, 2014</strong></h3>
+      		<p>Tea is an ancient, aromatic beverage formed from the steeped leaves and buds picked throughout the world.</p>
+      		<p>Nowadays tea is becoming ever more popular thanks to the commercial brand Teavana. However, as tea becomes more popular, more food additives, artificial sweeteners, and artificial flavoring are finding their ways into commercial tea ingredients.</p>
+      		<p>As an avid tea enthusiast and DIY junkie, my response will be a journey into the art of tea blending.</p>
+      		<p>In my excitement towards blending in my own kitchen, I searched online for resources to start with. Shocked, I found none! Any books focused either on the history of tea or it's medicinal purposes. The only book somewhat suitable: <i>The Art of Blending</i> by Blend Master, Lior Lev Sercarz, has been routinely identified as a "promotional book".</p>
+          <blockquote>This book is called Art of Blending yet nowhere in the book is there anything about blending spices, recipes for spice mixes, or even suggestions how one might mix spices. Instead it seems like a book to sell spices from the authors store.</blockquote>
+      		<p>Therefore, my mission has become to personally explore and discover tea blending the the hope to eventually publish my findings and consequently provide a means for others to begin blending</p>
+          <p class='date'>September 5, 2014</p>
+        </div>
+      </article>
+      <div class='fill header'>
+        <h1>The Craft of Tea</h1>
+        <div class='trigger' id='scrolltrigger'></div>
+      </div>
+    </div>
+    
+    
+  </div>
+</div>
+
+
+<script type='text/javascript'>
+
+
+// image preloader
+window.addEventListener('load', function(){
+  var img = document.getElementById('background');
+  img.addEventListener('load', function(){
+    classie.add(img, 'loaded');
+  });
+  img.setAttribute('src', img.getAttribute('data-src'));
+});
+
+
+(function LoadScrollIntro(){
+  
+  var content = LoadElem('scrollercontent'),
+      scroller = content.parentElement,
+      trigger = LoadElem('scrolltrigger');
+  
+  var scrollingKeys = [32, 37, 38, 39, 40],
+      isAnimating = false;
+  
+  
+  function OnScroll(event){
+    var y = GetScrollY();
+		if (classie.has(content, 'notrans')) classie.remove(content, 'notrans');
+    
+    if(isAnimating){
+      scroller.scrollTop = 0;
+      event.preventDefault();
+      return false;
+    };
+    
+    if((y > 0 && !classie.has(content, 'minify')) || (y <= 0 && classie.has(content, 'minify'))) Animate(event);
+  }
+  
+  function Animate(event){
+    event.preventDefault();
+    isAnimating = true;
+    classie.toggle(content, 'minify');
+    if(!classie.has(content, 'minify')) trigger.style.display = 'block';
+    setTimeout(function(){
+      if(classie.has(content, 'minify')) trigger.style.display = 'none';
+      isAnimating = false;
+    }, 800);
+  }
+  
+  function GetScrollY(){
+    return scroller.scrollTop;
+  }
+  function LoadElem(id){
+    var elem = document.getElementById(id);
+    elem.removeAttribute('id');
+    return elem;
+  }
+  
+  
+  (function Constructor(){
+    trigger.addEventListener('click', Animate);
+    scroller.addEventListener('scroll', OnScroll);
+    if(GetScrollY() > 0){
+      classie.add(content, 'notrans');
+      classie.add(content, 'minify');
+    };
+  })();
+  
+})();
+
+
+document.getElementById('navarchives').addEventListener('click', function(event){
+  classie.add(document.getElementById('body'), 'archives');
+  event.stopPropagation();
+});
+
+</script>
+</body>
+</html>

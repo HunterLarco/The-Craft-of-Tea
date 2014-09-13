@@ -1,0 +1,8 @@
+http://teavana.com/The-Teas/Rooibos-Teas/Lemon-Lime-Kampai-Rooibos-Tea.axd 
+
+
+
+options such as exclude domain, must match regex, cant match regex, etc.
+don't traverse excepted urls or traverse them but don't scan the content for data analytics
+use datastore for permanent data
+file types

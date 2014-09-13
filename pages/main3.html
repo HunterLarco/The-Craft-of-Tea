@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<style>
+
+body {
+	background:rgb(240,240,240);
+	color:rgb(105,96,107);
+  font-weight:400;
+	font-family:'lato', Arial, sans-serif;
+	text-rendering:optimizeLegibility;
+	-webkit-font-smoothing:antialiased;
+}
+
+
+article div.image{
+  height:420px;
+  background-color:rgb(51,51,51);
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  background-position:center 0px;
+  background-repeat:no-repeat;
+  background-image: url(http://tympanus.net/Tutorials/MediumStylePageTransition/images/4.jpg);
+}
+article div.image div.shadow{
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  color:rgb(255,255,255);
+  text-shadow:0px 1px 2px rgba(0,0,0,0.6);
+  opacity:0;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-pack: center;
+  -moz-box-align: center;
+  display: box;
+  box-orient: horizontal;
+  box-pack: center;
+  box-align: center;
+}
+article div.image div.shadow div.text{
+  text-align:center;
+}
+article div.image div.shadow div.text a.next{
+  font-size:1.3em;
+  line-height:1em;
+  border-bottom:1px solid rgb(255,255,255);
+  font-style:italic;
+  font-family: 'Arapey', serif;
+  text-decoration:none;
+}
+article div.image div.shadow div.text h1{
+  margin:0px;
+  padding:0.55em 0px 0.4em 0px;
+  font-size:3em;
+  line-height:1em;
+  font-weight:700;
+}
+article div.image div.shadow div.text h2{
+  margin:0px;
+  padding:0px;
+  font-size:2em;
+  line-height:1em;
+  font-weight:400;
+  font-family: 'Arapey', serif;
+  font-style:italic;
+}
+
+
+article div.content div.text{
+  max-width:800px;
+  padding:0px 50px;
+  margin:0px auto;
+}
+
+
+article p{
+  margin:0px 0px 30px 0px;
+  line-height:32px;
+}
+article p:first-of-type{
+  font-size:30px;
+  margin:0px 0px 40px 0px;
+  line-height:49px;
+}
+article blockquote{
+  padding: 9px;
+  font-style: italic;
+  font-size: 36px;
+  font-family: 'Lora', serif;
+  line-height: 50px;
+}
+article blockquote:before{
+  content:'\201C';
+}
+article blockquote:after{
+  content:'\201D';
+}
+
+
+</style>
+<html lang='en'>
+<head>
+  
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+<meta name="author" content="Hunter John Larco"/>
+<meta name="description" content="The Craft of Tea Blog" />
+<meta name="keywords" content="tea, blending, how to, craft, art, the art of, mixing, diy, make your own, oolong, green, white, chai, teavana, hunter larco, leaves"/>
+
+<title>The Craft of Tea</title>
+
+<!-- **************** favicon **************** -->
+<link rel='shortcut icon' type='image/x-icon' href='/images/favicon.ico' />
+
+<!-- **************** fonts **************** -->
+<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Arapey:400italic' rel='stylesheet' type='text/css'>
+
+<!-- **************** stylesheets **************** -->
+<link rel='stylesheet' href='/resources/css/reset.css'/>
+
+<!-- **************** scripts **************** -->
+<script type='text/javascript' src="/resources/scripts/classie.js"></script>
+
+</head>
+<body>
+
+
+
+<article>
+  
+  <div class='image'>
+    <div class='shadow'>
+      <div class='text'>
+        <a class='next'>Read Next</a>
+        <h1 class='title'>The Craft of Tea</h1>
+        <h2 class='description'>An Exploration of Tea Blending</h2>
+      </div>
+    </div>
+  </div>
+  
+  <div class='content'>
+    <h3 class='byline'>
+      Published <time>September 11, 2014</time> by <span class='author'>Hunter J. Larco</span>
+    </h3>
+    <h1 class='title'>The Craft of Tea</h1>
+    <h2 class='description'>An Exploration of Tea Blending</h2>
+    <div class='text'>
+			<p>Tea is an ancient, aromatic beverage formed from the steeped leaves and buds picked throughout the world.</p>
+			<p>Nowadays tea is becoming ever more popular thanks to the commercial brand Teavana. However, as tea becomes more popular, more food additives, artificial sweeteners, and artificial flavoring are finding their ways into commercial tea ingredients.</p>
+			<p>As an avid tea enthusiast and DIY junkie, my response will be a journey into the art of tea blending.</p>
+			<p>In my excitement towards blending in my own kitchen, I searched online for resources to start with. Shocked, I found none! Any books focused either on the history of tea or it's medicinal purposes. The only book somewhat suitable: <i>The Art of Blending</i> by Blend Master, Lior Lev Sercarz, has been routinely identified as a "promotional book".</p>
+      <blockquote>This book is called Art of Blending yet nowhere in the book is there anything about blending spices, recipes for spice mixes, or even suggestions how one might mix spices. Instead it seems like a book to sell spices from the authors store.</blockquote>
+			<p>Therefore, my mission has become to personally explore and discover tea blending the the hope to eventually publish my findings and consequently provide a means for others to begin blending</p>
+      <p class='date'>September 5, 2014</p>
+    </div>
+  </div>
+  
+</article>
+
+
+
+<script type='text/javascript'></script>
+</body>
+</html>
