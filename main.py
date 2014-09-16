@@ -10,6 +10,13 @@ class MainHandler(webapp2.RequestHandler):
 		self.response.out.write(template.render(path, template_values))
 
 
-app = webapp2.WSGIApplication([
-        ('/.*', MainHandler)
-      ], debug=True)
+class APIHandler(webapp2.RequestHandler):
+	def get(self, dictionary, method):
+		api.delegate(self, dictionary, method, api.Permissions.Guest)
+	def post(self, dictionary, method):
+		api.delegate(self, dictionary, method, api.Permissions.Guest)
+
+
+app = webapp2.WSGIApplication([('/.*', MainHandler),
+                               ('/api/[(^/]+)/([^/]+)/?', APIHandler)],
+                            debug=True)

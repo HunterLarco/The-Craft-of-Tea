@@ -1,5 +1,5 @@
 application: thecraftoftea
-version: 1
+version: admin
 runtime: python27
 api_version: 1
 threadsafe: yes
@@ -13,16 +13,24 @@ handlers:
 - url: /resources
   static_dir: resources
 
-- url: /admin/api/.*
-  script: api.app
-  login: admin
-- url: /admin/tools/([^/]+)
-  static_files: admin/\1.html
-  upload: admin/([^/]+).html
+# tools pages
+- url: /([^/]+)
+  static_files: tools/\1.html
+  upload: tools/([^/]+).html
   login: admin
 
+# api handlers
+- url: /([^/]+)/([^/]+)
+  script: app.app
+
+# default page
 - url: .*
-  script: main.app
+  static_files: urls.html
+  upload: urls.html
+
+
+
+
 
 libraries:
 - name: webapp2
