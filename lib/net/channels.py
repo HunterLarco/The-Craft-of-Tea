@@ -16,11 +16,14 @@ def __formid__():
 def create():
   ID = __formid__()
   token = channel.create_channel(ID)
-  return dict(key=token, token=ID)
+  return dict(client=token, token=ID)
 
 
-def send(token, message):
-  if not isinstance(message, str):
-    from json import dumps
-    message = dumps(message)
+def send(token, message, freq='default'):
+  message = {
+    'frequency': freq,
+    'message': message
+  }
+  from json import dumps
+  message = dumps(message)
   channel.send_message(token, message)
