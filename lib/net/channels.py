@@ -1,22 +1,22 @@
 from google.appengine.api import channel
 
 
-def __formid__():
+def __formServerToken__():
   import random
   rand = random.SystemRandom()
   
-  import datetime
-  time = datetime.datetime.now().strftime("%s")
+  import time
+  currenttime = str(time.time())
   
   salt = ''.join(chr(rand.randint(65,90)) for x in range(10))
 
-  return time+salt
+  return currenttime + salt
 
 
 def create():
-  ID = __formid__()
-  token = channel.create_channel(ID)
-  return dict(client=token, token=ID)
+  server_token = __formServerToken__()
+  client_token = channel.create_channel(server_token)
+  return dict(client=client_token, server=server_token)
 
 
 def send(token, message, freq='default'):

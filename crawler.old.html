@@ -337,8 +337,7 @@ div.settings div.frame{
 <link rel='stylesheet' href='/resources/css/reset.css'/>
 
 <!-- **************** scripts **************** -->
-<script type='text/javascript' src="/resources/scripts/channel.js"></script>
-<script type='text/javascript' src="/resources/scripts/crawl.js"></script>
+<script type='text/javascript' src="/resources/scripts/classie.js"></script>
 <script type='text/javascript' src="/resources/scripts/request.js"></script>
 <script type="text/javascript" src="/_ah/channel/jsapi"></script>
 
@@ -565,6 +564,356 @@ div.settings div.frame{
 
 
 
+
+
+function OnQueueSuccess(event){
+  console.log('queue set');
+}
+
+function OnQueueError(event){
+  alert('Unable to Queue Job\n\nSee console for details.');
+  event.error('Unable to Queue Job');
+}
+
+function QueueJob(domain, onupdate, onfinish){
+  if(!channeltoken){
+    ConnectToServer(function Callback(){
+      console.log('channel connected')
+      QueueJob(domain, onupdate, onfinish);
+    });
+    return;
+  }
+  Request('/admin/api/crawler/queue', {
+    'domain': domain,
+    'token': channeltoken
+  }, OnQueueSuccess, {default:OnQueueError});
+}
+
+
+
+
+
+
+
+var channeltoken, channel;
+
+var links = [];
+
+function OnChannelMessage(event){
+  var event = JSON.parse(event.data);
+  if(event.type == 'page'){
+    if(links.indexOf(event.page.location) > -1)
+      console.error('Duplicate: '+event.page.location);
+    else
+      links.push(event.page.location);
+  }else if(event.type == 'log'){
+    console.log(event.log.message);
+  }
+}
+
+function OnChannelError(event){
+  event.description
+}
+
+function OnChannelClose(){
+  
+}
+
+
+
+
+
+
+function OnConnection(event, callback){
+  channeltoken = event.channel.token;
+  channel = new goog.appengine.Channel(event.channel.key);
+  socket = channel.open();
+  socket.onopen = function(){
+    if(typeof callback == 'function') callback();
+  };
+  socket.onmessage = OnChannelMessage;
+  socket.onerror = OnChannelError;
+  socket.onclose = OnChannelClose;
+}
+
+function OnConnectionError(event){
+  alert('Unable To Connect To Server\n\nSee console for details.');
+  event.error('Unable To Connect To Server');
+}
+
+function ConnectToServer(callback){
+  Request('/admin/api/crawler/connect', {}, function(event){
+    OnConnection(event, callback);
+  }, {default:OnConnectionError});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var Crawler = new (function(){
+  var self = this;
+  
+  var elements = {
+    'settings': {
+      'inputs': {
+        'domain': document.getElementById('settings_domain'),
+        'urlmatch': document.getElementById('settings_umatch'),
+        'includedsubdomains': document.getElementById('settings_isub'),
+        'excludedsubdomains': document.getElementById('settings_esub'),
+        'includedmimetypes': document.getElementById('settings_imime'),
+        'excludedmimetypes': document.getElementById('settings_emime')
+      },
+      'checkboxes': {
+        'mapnakeddomains': document.getElementById('mapnakeddomains'),
+        'stripurls': document.getElementById('stripurls')
+      }
+    }
+  }
+  
+  
+  self.create = CreateCrawl;
+  
+  
+  function CreateCrawl(){
+    var crawl = new Crawl(
+      elements.settings.inputs.domain.value,
+      elements.settings.inputs.urlmatch.value,
+      elements.settings.inputs.includedsubdomains.value,
+      elements.settings.inputs.excludedsubdomains.value,
+      elements.settings.inputs.includedmimetypes.value,
+      elements.settings.inputs.excludedmimetypes.value,
+      elements.settings.checkboxes.mapnakeddomains.checked,
+      elements.settings.checkboxes.stripurls.checked
+    );
+    return crawl;
+  }
+  
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var channel;
+
+// event listeners
+//    onmessage
+function Channel(){
+  var self = this;
+  
+  
+  var server_token, client_token;
+  var channel;
+  
+  var listeners = {};
+  
+  
+  self.getServerToken = GetServerToken;
+  self.getClientToken = GetClientToken;
+  
+  self.connect = Connect;
+  self.listen = Listen;
+  
+  
+  function Connect(callback){
+    channel = channel.open({
+      'onopen': function(){if(typeof callback == 'function') callback();},
+      'onmessage': OnChannelMessage,
+      'onerror': OnChannelError,
+      'onclose': OnChannelClose
+    });
+  }
+  function Listen(freq, listener){
+    if (!listeners[freq]) listeners[freq] = [];
+    listeners[freq].push(listener);
+  }
+  
+  function OnChannelError(event){
+    alert('Channel Error\n\nSee console for details.');
+    console.warn('Channel Error: '+event.description);
+  }
+  function OnChannelClose(){
+    alert('Channel Closed');
+    console.warn('Channel Closed');
+  }
+  function OnChannelMessage(event){
+    if(!listeners[event.frequency])
+  }
+  
+  function GetServerToken(){
+    return server_token;
+  }
+  function GetClientToken(){
+    return client_token;
+  }
+  
+  
+  (function Constructor(client, server){
+    client_token = client;
+    server_token = server;
+    channel = new goog.appengine.Channel(client_token);
+  }).apply(self, arguments);
+}
+
+
+// event listeners
+//    oncreated
+//      ~ when a new crawl is created in the server
+//    onconnect
+//      ~ when the channel is connected to the crawl and verified
+//    onverifyconnection
+//      ~ when the channel is created a ping is sent to the server, this is the start of this process.
+//    onping
+//      ~ when a ping is sent
+function Crawl(){
+  var self = this;
+  
+  
+  var settings = {};
+  var listeners = {};
+  
+  var channelconstants = {};
+  
+  var key;
+  
+  
+  self.queue = Queue;
+  
+  self.addEventListener = AddEventListener;
+  self.removeEventListener = RemoveEventListener;
+  self.__events__ = [];
+  self.__events__.fire = FireEvent;
+  
+  
+  function AddEventListener(event, funct){
+    if(typeof event != 'string' || typeof funct != 'function') return;
+    if(self.__events__.indexOf(event) == -1) self.__events__.push(event);
+    if(!listeners[event]) listeners[event] = [];
+    listeners[event].push(funct);
+  }
+  function RemoveEventListener(event, funct){
+    if(typeof event != 'string' || typeof funct != 'function') return;
+    if(self.__events__.indexOf(event) != -1) self.__events__.splice(self.__events__.indexOf(event), 1);
+    if(!listeners[event]) return;
+    var index = listeners[event].indexOf(funct);
+    while(index>-1){
+      listeners[event].splice(index, 1);
+      index = listeners[event].indexOf(funct);
+    }
+  }
+  function FireEvent(event, data){
+    var data = data || {};
+    if(!listeners[event]) return true;
+    for(var i=0,funct; funct=listeners[event][i++];)
+      if(funct(data) === false) return false;
+    return true;
+  }
+  
+  function OnCrawlCreationError(event){
+    event.warn('Crawler Creation Error... Retrying');
+    event.retry();
+  }
+  
+  // shown in order of procedure
+  function Queue(){
+    Request('/admin/api/crawler/create', settings, function(event){
+      self.__events__.fire('created');
+      key = event.crawler.key;
+      ConnectChannel(event.connection, function Callback(){
+        VerifyConnection(InitializeQueue);
+      });
+    }, {default:OnCrawlCreationError});
+  }
+  function ConnectChannel(connectionevent, callback){
+    if(!!channel) return __callback__();
+    channel = new Channel(connectionevent.client, connectionevent.token);
+    channelconstants = connectionevent.constants;
+    channel.connect(__callback__);
+    function __callback__(){
+      channel.addEventListener('message', OnChannelMessage);
+      self.__events__.fire('connect');
+      if (typeof callback == 'function') callback();
+    }
+  }
+  function VerifyConnection(callback){
+    self.__events__.fire('verifyconnection');
+    var interval, time = 1, recieved = false;
+    
+    channel.addEventListener('message', function(event){
+      if(event.type != channelconstants.PING_RESPONSE || recieved) return;
+      self.__events__.fire('connect');
+      clearTimeout(interval);
+      recieved = true;
+      if(typeof callback == 'function') callback();
+    });
+    
+    function SendPing(){
+      Request('/admin/api/crawler/ping', {
+        'key': key,
+        'channel': channel.getServerToken()
+      }, new Function(), {});
+    }
+    
+    function RetryPing(){
+      SendPing();
+      var seconds = (Math.pow(2,time++)-1)*2;
+      self.__events__.fire('ping', {
+        seconds: seconds
+      });
+      interval = setTimeout(RetryPing, seconds*1000);
+    }
+    
+    RetryPing();
+  }
+  function InitializeQueue(){
+    console.log('Initializing');
+  }
+  
+  function OnChannelMessage(event){
+    // console.log(event);
+  }
+  
+  
+  (function Constructor(){
+    settings = {
+      'domain':             arguments[0],
+      'urlmatch':           arguments[1],
+      'includedsubdomains': arguments[2],
+      'excludedsubdomains': arguments[3],
+      'includedmimetypes':  arguments[4],
+      'excludedmimetypes':  arguments[5],
+      'mapnakeddomains':  arguments[6],
+      'stripurls':  arguments[7]
+    };
+  }).apply(self, arguments);
+}
 
 
 </script>

@@ -1,6 +1,5 @@
 # common imports
 import response
-from .. import crawler
 
 
 ### within this file, each root class defines what API functions are accessible by POST or GET. that way permission may be changed by simply instruction the API engine to delegate to a different permission map. For example, 'admin' indicates that api url '/constants/add' allows one to add a constant to the database, because a user doesn't have this privilage, their permission map lacks this ability. Note that GET requests must use the get dictionary exclusively
@@ -29,39 +28,71 @@ def require(*keys):
 
 
 
+from .. import crawler
+
 
 
 
 class Admin:
   
-  class crawler:
+  """ -------------- BEGINNING OF CHANNEL DICT -------------- """
+  
+  class channel:
     
-    
-    @require('key', 'channel')
+    @require('token')
     def ping(self, payload):
-      crawl = crawler.model.get(payload['key'])
-      if crawl == None:
-        return response.throw(200, payload['key']);
-      crawl.ping(payload['channel'])
+      from ..net import channels
+      channels.send(payload['token'], {}, freq='ping')
     
-    
-    @require('domain')
-    def create(self, payload):
+    def connect(self, payload):
+      from ..net import channels
+      tokens = channels.create()
+      return response.reply({
+        'tokens': {
+          'client': tokens['client']
+        }
+      })
+  
+  """ -------------- END OF CHANNEL DICT -------------- """
+  
+  
+  
+  
+  
+  
+  """ -------------- BEGINNING OF CRAWLER DICT -------------- """
+  
+  class crawl:
+
+    @require('domain', 'channel')
+    def queue(self, payload):
       domain = payload['domain']
-      channel_token = payload['channel']['token'] if 'channel' in payload and token in payload['channel'] else None
+      channel_token = payload['channel']['token']
+      options = payload['options'] if 'options' in payload else {}
       
-      kwarg_names = ['urlmatch', 'includedsubdomains', 'excludedsubdomains', 'includedmimetypes', 'excludedmimetypes', 'mapnakeddomains', 'stripurls']
-      kargs = [payload[param] if param in payload else None for param in kwarg_names]
+      kwarg_names = [
+        'urlmatch',
+        'includedsubdomains',
+        'excludedsubdomains',
+        'includedmimetypes',
+        'excludedmimetypes',
+        'mapnakeddomains',
+        'stripurls'
+      ]
+      kwargs = {}
+      for param in kwarg_names:
+        if param in options:
+          kwargs[param] = options[param]
       
-      crawl = crawler.model.create(domain, *kargs)
+      crawl = crawler.model.create(domain, **kwargs)
       connection = crawl.connect(channel_token)
+      crawl.queue()
       
       return response.reply({
-        'connection': connection,
-        'crawler': {
+        'crawl': {
           'key': crawl.key.urlsafe()
         }
       })
 
-
+  """ -------------- END OF CRAWLER DICT -------------- """
 
