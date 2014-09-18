@@ -28,11 +28,6 @@ handlers:
 - url: .*
   static_files: urls.html
   upload: urls.html
-  login: admin
-
-
-
-
 
 libraries:
 - name: webapp2

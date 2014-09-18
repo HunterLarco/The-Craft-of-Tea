@@ -24,6 +24,30 @@ def require(*keys):
 
 
 
+
+class Guest:
+  
+  class post:
+    
+    @require('post','content')
+    def comment(self, payload):
+      try:
+        identifier = int(payload['post'])
+      except:
+        return response.throw(201)
+      
+      from ..blog import posts
+      
+      post = posts.get(identifier)
+      if post == None:
+        return response.throw(200, data_struct=identifier)
+      
+      post.comment(payload['content'], handle=None if not 'handle' in payload else payload['handle'])
+
+
+
+
+
 class Admin:
   pass
 

@@ -10,7 +10,10 @@ __ERROR__RESPONSES__ = {
   100 : "API Handler Map Dictionary '%s' Does Not contain Method '%s'",
   101 : "API Handler Map Does Not Contain Dictionary '%s'",
   102 : "GET API Requests Must Use The 'get' Dictionary In The Permissions Map",
-  103 : "A POST API Request May Not Use The 'get' Dictionary"
+  103 : "A POST API Request May Not Use The 'get' Dictionary",
+  
+  200 : "Post '%s' Does Not Exist",
+  201 : "Post Identifier Must Be A Number"
 }
 
 

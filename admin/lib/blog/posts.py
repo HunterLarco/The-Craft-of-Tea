@@ -21,6 +21,14 @@ class Post(ndb.Model):
   prev_post = ndb.IntegerProperty()
   next_post = ndb.IntegerProperty()
   
+  def comments(self):
+    import comments
+    return comments.fetch(self)
+  
+  def comment(self, content, handle=None):
+    import comments
+    comments.create(self, content, handle)
+  
   def prev(self):
     if not self.prev_post:
       return None
@@ -100,5 +108,8 @@ def getNewest():
 def get(identifier=None):
   if identifier == None:
     return getNewest()
-  post = Post.get_by_id(identifier)
+  try:
+    post = Post.get_by_id(identifier)
+  except:
+    return None
   return post

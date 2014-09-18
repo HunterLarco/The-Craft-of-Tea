@@ -51,6 +51,10 @@ article div.comments div.comment{
   position:relative;
   overflow:visible;
   font-size:0.8em;
+  word-wrap: break-word;
+}
+article div.comments div.comment.gone{
+  display:none;
 }
 article div.comments div.comment div.author{
   text-align:right;
@@ -161,6 +165,19 @@ div.comment div.button div.b:active{
   margin-top:1px;
 }
 
+
+div.comments div.error{
+  color:rgb(140,0,0);
+  text-align:center;
+  font-size:15px;
+  font-weight:bold;
+  margin-bottom:20px;
+  display:none;
+}
+div.comments div.error.show{
+  display:block;
+}
+
 </style>
 <html lang='en'>
 <head>
@@ -185,6 +202,7 @@ div.comment div.button div.b:active{
 
 <!-- **************** scripts **************** -->
 <script type='text/javascript' src="/resources/scripts/classie.js"></script>
+<script type='text/javascript' src="/resources/scripts/request.js"></script>
 </head>
 <body>
 
@@ -199,7 +217,9 @@ div.comment div.button div.b:active{
       <p>by <strong>{{post.author}}</strong> &#8212; written on <strong>{{post.date|date:"F d, Y"}}</strong></p>
 		</div>
 	</header>
+  
   <button class="trigger" data-info="Scroll Down or Click Here"><span>Trigger</span></button>
+  
 	<article class="content">
 		<div>
       
@@ -221,23 +241,22 @@ div.comment div.button div.b:active{
       </div>
       
       <div class='comments'>
-        <div class='comment'>
-          <textarea placeholder='Write your comment here.'></textarea>
-          <div class='name'><div class='input'><input placeholder='Name (optional)'/></div></div><!--
-       --><div class='button'><div class='frame'><div class='b'>Comment</div></div></div>
+        
+        <div class='comment' id='comment_frame'>
+          <textarea placeholder='Write your comment here.' id='comment_content'></textarea>
+          <div class='name'><div class='input'><input placeholder='Name (optional)' id='comment_handle'/></div></div><!--
+       --><div class='button'><div class='frame'><div class='b' id='comment_button'>Comment</div></div></div>
         </div>
+        
+        <div class='error' id='comment_error'></div>
+        
+        {% for comment in post.comments %}
         <div class='comment'>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          <div class='author'>Hunter Larco <label>9.2.2014</label></div>
+          {{comment.content}}
+          <div class='author'>{{comment.handle|default_if_none:""}} <label>{{comment.date|date:"n.j.Y"}}</label></div>
         </div>
-        <div class='comment'>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          <div class='author'>Hunter Larco <label>9.2.2014</label></div>
-        </div>
-        <div class='comment'>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          <div class='author'>Hunter Larco <label>9.2.2014</label></div>
-        </div>
+        {% endfor %}
+        
       </div>
 
 		</div>
@@ -249,6 +268,7 @@ div.comment div.button div.b:active{
 <script type='text/javascript'>
 
 
+// preloads and fades in main image
 window.addEventListener('load', function(){
   var img = document.getElementById('background');
   img.addEventListener('load', function(){
@@ -258,164 +278,60 @@ window.addEventListener('load', function(){
 });
 
 
+// comment system
+(function(){
+  
+  window.addEventListener('load', BindCommentBox);
 
+  var button, handle, content, frame, error;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	(function() {
-
-		// detect if IE : from http://stackoverflow.com/a/16657946		
-		var ie = (function(){
-			var undef,rv = -1; // Return value assumes failure.
-			var ua = window.navigator.userAgent;
-			var msie = ua.indexOf('MSIE ');
-			var trident = ua.indexOf('Trident/');
-
-			if (msie > 0) {
-				// IE 10 or older => return version number
-				rv = parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-			} else if (trident > 0) {
-				// IE 11 (or newer) => return version number
-				var rvNum = ua.indexOf('rv:');
-				rv = parseInt(ua.substring(rvNum + 3, ua.indexOf('.', rvNum)), 10);
-			}
-
-			return ((rv > -1) ? rv : undef);
-		}());
-
-
-		// disable/enable scroll (mousewheel and keys) from http://stackoverflow.com/a/4770179					
-		// left: 37, up: 38, right: 39, down: 40,
-		// spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
-		var keys = [32, 37, 38, 39, 40], wheelIter = 0;
-
-		function preventDefault(e) {
-			e = e || window.event;
-			if (e.preventDefault)
-			e.preventDefault();
-			e.returnValue = false;  
-		}
-
-		function keydown(e) {
-			for (var i = keys.length; i--;) {
-				if (e.keyCode === keys[i]) {
-					preventDefault(e);
-					return;
-				}
-			}
-		}
-
-		function touchmove(e) {
-			preventDefault(e);
-		}
-
-		function wheel(e) {
-			// for IE 
-			//if( ie ) {
-				//preventDefault(e);
-			//}
-		}
-
-		function disable_scroll() {
-			window.onmousewheel = document.onmousewheel = wheel;
-			document.onkeydown = keydown;
-			document.body.ontouchmove = touchmove;
-		}
-
-		function enable_scroll() {
-			window.onmousewheel = document.onmousewheel = document.onkeydown = document.body.ontouchmove = null;  
-		}
-
-		var docElem = window.document.documentElement,
-			scrollVal,
-			isRevealed, 
-			noscroll, 
-			isAnimating,
-			container = document.getElementById( 'container' ),
-			trigger = container.querySelector( 'button.trigger' );
-
-		function scrollY() {
-			return window.pageYOffset || docElem.scrollTop;
-		}
-		
-		function scrollPage() {
-			scrollVal = scrollY();
-			
-			if( noscroll && !ie ) {
-				if( scrollVal < 0 ) return false;
-				// keep it that way
-				window.scrollTo( 0, 0 );
-			}
-
-			if( classie.has( container, 'notrans' ) ) {
-				classie.remove( container, 'notrans' );
-				return false;
-			}
-
-			if( isAnimating ) {
-				return false;
-			}
-			
-			if( scrollVal <= 0 && isRevealed ) {
-				toggle(0);
-			}
-			else if( scrollVal > 0 && !isRevealed ){
-				toggle(1);
-			}
-		}
-
-		function toggle( reveal ) {
-			isAnimating = true;
-			
-			if( reveal ) {
-				classie.add( container, 'modify' );
-			}
-			else {
-				noscroll = true;
-				disable_scroll();
-				classie.remove( container, 'modify' );
-			}
-
-			// simulating the end of the transition:
-			setTimeout( function() {
-				isRevealed = !isRevealed;
-				isAnimating = false;
-				if( reveal ) {
-					noscroll = false;
-					enable_scroll();
-				}
-			}, 600 );
-		}
-
-		// refreshing the page...
-		var pageScroll = scrollY();
-		noscroll = pageScroll === 0;
-		
-		disable_scroll();
-		
-		if( pageScroll || location.hash == '#ref') {
-      noscroll = false;
-			isRevealed = true;
-			classie.add( container, 'notrans' );
-			classie.add( container, 'modify' );
-		}
+  function BindCommentBox(){
+    button = document.getElementById('comment_button');
+    handle = document.getElementById('comment_handle');
+    content = document.getElementById('comment_content');
+    frame = document.getElementById('comment_frame');
+    error = document.getElementById('comment_error');
     
-    window.addEventListener( 'scroll', scrollPage );
-    trigger.addEventListener( 'click', function() { toggle( 'reveal' ); } );
-	})();
+    button.addEventListener('click', SendComment);
+  }
+  
+  function ThrowTooShort(){
+    error.innerHTML = 'Please use at least 100 characters in your comment.';
+    classie.add(error, 'show');
+  }
+  function UnknownError(){
+    error.innerHTML = 'There was an error processing your comment.';
+    classie.add(error, 'show');
+  }
+  
+  function SendComment(){
+    if(content.value.length < 100) return ThrowTooShort();
+    classie.remove(error, 'show');
+    classie.add(frame, 'gone');
+    CreateNewComment();
+    Request('/api/post/comment', {
+      'post': {{post.identifier|safe}},
+      'content': content.value,
+      'handle': handle.value.length == 0 ? undefined : handle.value
+    }, null, {default:UnknownError});
+  }
+  function CreateNewComment(){
+    var comment = document.createElement('div');
+    comment.setAttribute('class', 'comment');
+    comment.appendChild(document.createTextNode(content.value));
+      var author = document.createElement('div');
+      author.setAttribute('class', 'author');
+      var date = new Date();
+      author.innerHTML = (handle.value.length == 0 ? '' : handle.value)+
+                         ' \<label>'+(date.getMonth()+1)+'.'+date.getDate()+'.'+date.getFullYear()+'\</label>';
+   comment.appendChild(author);
+   frame.parentElement.insertBefore(comment, frame);
+  }
+  
+})();
+
+
 </script>
 </body>
+<script type='text/javascript' src="/resources/scripts/jam3.js"></script>
 </html>
