@@ -45,6 +45,8 @@ div.preview div.buttons{
   bottom:0px;
   left:0px;
   right:0px;
+}
+div.preview div.buttons div.background{
   padding:20px 26px;
   background:rgb(203,78,78);
   border-top:1px solid rgb(153,28,28);
@@ -62,15 +64,38 @@ div.preview div.buttons div.button{
   border-radius:         2px;
   border-bottom:3px solid rgb(123,0,0);
   cursor:pointer;
+  position:relative;
+  overflow:hidden;
 }
-div.preview div.buttons div.button:hover{
+div.preview div.buttons div.button.disabled{
+  cursor:not-allowed;
+}
+div.preview div.buttons div.button:not(.disabled):hover{
   border-bottom:2px solid rgb(123,0,0);
   margin-top:1px;
 }
-div.preview div.buttons div.button:active{
+div.preview div.buttons div.button:not(.disabled):active{
   border-top:2px solid rgb(123,0,0);
   border-bottom:none;
   margin-top:1px;
+}
+div.preview div.buttons div.button:not(.disabled)::after{
+  content:'';
+  display:block;
+  position:absolute;
+  top:0px;
+  left:0px;
+  height:100%;
+  background:rgba(0,0,0,0.15);
+  width:0%;
+}
+div.preview div.buttons div.button:not(.disabled):active::after{
+  width:100%;
+  -webkit-transition: width 1500ms linear;
+  -moz-transition:    width 1500ms linear;
+  -ms-transition:     width 1500ms linear;
+  -o-transition:      width 1500ms linear;
+  transition:         width 1500ms linear;
 }
 div.preview div.buttons div.info:after{
   float:left;
@@ -80,25 +105,22 @@ div.preview div.buttons div.info:after{
   line-height:40px;
   margin-right:15px;
 }
-div.preview div.buttons div.saving:after{
-  content:'draft saved';
-}
-div.preview div.buttons div.saving.working:after{
-  color:rgb(255,250,250);
-  content:'saving draft';
-}
 div.preview div.buttons div.published:after{
-  content:'pusblished';
+  content:'published';
 }
 div.preview div.buttons div.published.not:after{
   content:'not published';
+}
+div.preview div.buttons div.published.working:after{
+  content:'publishing...';
+  color:rgb(240,240,240);
 }
 
 
 div.preview div.content{
   position:absolute;
   top:54px;
-  bottom:81px;
+  bottom:107px;
   left:0px;
   right:0px;
   overflow:scroll;
@@ -176,6 +198,27 @@ div.editor div.tagerror.show{
   display:block;
 }
 
+
+div.buttons div.meta{
+  background:rgb(230,230,230);
+  border-top:1px solid rgb(200,200,200);
+}
+div.buttons div.meta div.half{
+  display:inline-block;
+  width:50%;
+}
+div.buttons div.meta div.padding{
+  padding:7px 12px;
+}
+div.buttons div.meta input{
+  width:100%;
+  outline:none;
+  border:none;
+  margin:0px;
+  padding:0px;
+  background:none;
+}
+
 </style>
 <meta charset='UTF-8' NAME='Author' CONTENT='Hunter Larco' />
 
@@ -200,10 +243,14 @@ div.editor div.tagerror.show{
   <div class='title'>Preview</div>
   <div class='content' id='preview'></div>
   <div class='buttons'>
-    <div class='info published not'></div>
-    <div class='info saving'></div>
-    <div class='button' id='publish'>Delete Draft</div>
-    <div class='button' id='publish'>Publish &amp; Delete Draft</div>
+    <div class='meta'>
+      <div class='half'><div class='padding'><input autocomplete='off' id='title' placeholder='Post Title'/></div></div><!--
+   --><div class='half'><div class='padding'><input autocomplete='off' id='author' placeholder='Post Author'/></div></div>
+    </div>
+    <div class='background'>
+      <div class='info published not' id='publishstatus'></div>
+      <div class='button' id='publish'>Publish Post</div>
+    </div>
   </div>
 </div>
 
@@ -217,12 +264,13 @@ div.editor div.tagerror.show{
   
   function OnWindowLoad(){
     BindTextarea();
+    BindPublishButton();
   }
   
   
   // ---------------- BEGINNING OF TEXTAREA CODE ---------------- \\
   
-  var editor, preview, illegaltagerror;
+  var editor, preview, illegaltagerror, postvalue;
   
   var acceptabletags = ['p','i','b','blockquote'];
   
@@ -252,7 +300,7 @@ div.editor div.tagerror.show{
     else
       classie.remove(illegaltagerror, 'show');
     
-    preview.innerHTML = value + AddDateStamp();
+    postvalue = preview.innerHTML = value;
   }
   function RemoveIllegalTags(html){
     // resursively reads html tree and replaces unacceptable tags with text nodes
@@ -281,11 +329,6 @@ div.editor div.tagerror.show{
       'changed': changed
     };
   }
-  function AddDateStamp(){
-    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'],
-        now = new Date();
-    return '\<p class="date">'+months[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear()+'\</p>';
-  }
   
   function CreateSubtitle(){
     var sub = document.getElementById('acceptabletags');
@@ -299,6 +342,59 @@ div.editor div.tagerror.show{
   
   // ---------------- END OF TEXTAREA CODE ---------------- \\
   
+  
+  // ---------------- BEGINNING OF PUBLISHING CODE ---------------- \\
+  
+  var button, title, author, publishtimeout, publishstatus;
+  
+  function BindPublishButton(){
+    button = document.getElementById('publish');
+    title = document.getElementById('title');
+    author = document.getElementById('author');
+    publishstatus = document.getElementById('publishstatus');
+    
+    button.addEventListener('mousedown', ListenToPublisher);
+  }
+  
+  function ListenToPublisher(){
+    document.addEventListener('mouseup', ClearPublisher);
+    publishtimeout = setTimeout(PublishPost, 1500);
+  }
+  function ClearPublisher(){
+    document.removeEventListener('mouseup', ClearPublisher);
+    clearTimeout(publishtimeout);
+  }
+  
+  function DisableButton(){
+    classie.add(button, 'disabled');
+  }
+  function EnableButton(){
+    classie.remove(button, 'disabled');
+  }
+  
+  function PublishPost(){
+    if(title.value.length < 5) return alert('Please Provide a Title');
+    if(author.value.length < 5) return alert('Please Provide an Author');
+    DisableButton();
+    classie.add(publishstatus, 'working');
+    Request('/post/create', {
+      'author': author.value,
+      'title': title.value,
+      'content': postvalue
+    }, OnPublish, {default:RetryRequest});
+  }
+  function OnPublish(){
+    classie.remove(publishstatus, 'working');
+    classie.remove(publishstatus, 'not');
+    EnableButton();
+    button.innerHTML = 'Update Post';
+  }
+  
+  function RetryRequest(event){
+    event.retry();
+  }
+  
+  // ---------------- END OF PUBLISHING CODE ---------------- \\
   
 })();
 

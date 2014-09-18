@@ -21,12 +21,22 @@ div.content{
 	font-size: 22px;
 	line-height: 1.5;
 	font-family: 'Raleway', Arial, sans-serif;
+  background:rgb(21,21,21);
 }
 div.content img.background{
   position:absolute;
   left:0px;
   top:0px;
   width:100%;
+  opacity:0;
+  -webkit-transition: opacity 700ms ease 200ms;
+  -moz-transition:    opacity 700ms ease 200ms;
+  -ms-transition:     opacity 700ms ease 200ms;
+  -o-transition:      opacity 700ms ease 200ms;
+  transition:         opacity 700ms ease 200ms;
+}
+div.content img.background.loaded{
+  opacity:1;
 }
 div.content div.letter{
   position:absolute;
@@ -88,12 +98,15 @@ div.letter a{
 <!-- **************** stylesheets **************** -->
 <link rel='stylesheet' href='/resources/css/reset.css'/>
 
+<!-- **************** scripts **************** -->
+<script type='text/javascript' src="/resources/scripts/classie.js"></script>
+
 </head>
 <body>
 
 
 <div class='content'>
-  <img class='background' src='/images/404.jpg'/>
+  <img class='background' id='background' data-src='/images/404.jpg'/>
   <div class='letter'>
     <div class='shadow'>
       <h1>Error 404</h1>
@@ -104,5 +117,15 @@ div.letter a{
 </div>
 
 
+<script type='text/javascript'>
+// preloads and fades in main image
+window.addEventListener('load', function(){
+  var img = document.getElementById('background');
+  img.addEventListener('load', function(){
+    classie.add(img, 'loaded');
+  });
+  img.setAttribute('src', img.getAttribute('data-src'));
+});
+</script>
 </body>
 </html>

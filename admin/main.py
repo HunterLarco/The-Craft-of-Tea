@@ -1,5 +1,7 @@
 import webapp2
 
+from lib import api
+
 
 class APIHandler(webapp2.RequestHandler):
 	def get(self, dictionary, method):
@@ -8,5 +10,5 @@ class APIHandler(webapp2.RequestHandler):
 		api.delegate(self, dictionary, method, api.Permissions.Admin)
 
 
-app = webapp2.WSGIApplication([('/[(^/]+)/([^/]+)/?', APIHandler)],
+app = webapp2.WSGIApplication([('/([^/]+)/([^/]+)/?', APIHandler)],
                             debug=True)

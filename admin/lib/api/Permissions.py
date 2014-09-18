@@ -49,6 +49,12 @@ class Guest:
 
 
 class Admin:
-  pass
+  
+  class post:
+    
+    @require('content', 'title', 'author')
+    def create(self, payload):
+      from ..blog import posts
+      posts.create(payload['title'], payload['author'], payload['content'])
 
 
