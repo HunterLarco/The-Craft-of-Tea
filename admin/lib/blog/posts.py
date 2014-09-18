@@ -15,6 +15,8 @@ class Post(ndb.Model):
   created = ndb.DateTimeProperty(auto_now_add=True)
   # post content (HTML)
   content = ndb.TextProperty()
+  title = ndb.StringProperty(indexed=True)
+  author = ndb.StringProperty(indexed=True)
   # next and previous posts
   prev_post = ndb.IntegerProperty()
   next_post = ndb.IntegerProperty()
@@ -42,11 +44,13 @@ class Post(ndb.Model):
 ' RETURNS
 '   <Post extends ndb.Model>
 """
-def create(content):
+def create(title, author, content):
   prev_post = getNewest()
   
   post = Post()
   post.content = content
+  post.author = author
+  post.title = title
   post.prev_post = prev_post.id() if prev_post else None
   post.put()
   

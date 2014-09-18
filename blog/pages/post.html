@@ -81,16 +81,84 @@ article div.links div.link div{
   padding:0px 20px;
   cursor:inherit;
 }
-article div.links div.link:first-child div{
+article div.links div.link.first div{
   margin-right:2px;
 }
-article div.links div.link:last-child div{
+article div.links div.link.last div{
   margin-left:2px;
 }
 article div.links div.link div label{
   color:rgb(160,160,160);
   font-style:italic;
   cursor:inherit;
+}
+
+
+div.comment textarea{
+  margin: 0px;
+  resize: none;
+  width: 100%;
+  border: none;
+  padding: 0px;
+  outline: none;
+  min-height:140px;
+}
+div.comment div.name{
+  display:inline-block;
+  width:80%;
+  vertical-align:top;
+}
+div.comment div.name div.input{
+  margin-right:2px;
+  border-top:1px solid rgb(180,180,180);
+  -webkit-border-radius: 2px;
+  -moz-border-radius:    2px;
+  border-radius:         2px;
+  padding:3px 7px;
+}
+div.comment div.name div.input input{
+  margin:0px;
+  padding:0px;
+  outline:none;
+  border:none;
+  width:100%;
+  font-size:15px;
+}
+div.comment div.button{
+  display:inline-block;
+  width:20%;
+  vertical-align:top;
+  text-align:right;
+}
+div.comment div.button div.frame{
+  margin-left:2px;
+}
+
+
+
+div.comment div.button div.b{
+  font-size:16px;
+  font-weight:bold;
+  margin:0px 4px;
+  padding:6px 11px;
+  color:rgb(255,255,255);
+  vertical-align:top;
+  display:inline-block;
+  background:rgb(188,63,63);
+  -webkit-border-radius: 2px;
+  -moz-border-radius:    2px;
+  border-radius:         2px;
+  border-bottom:3px solid rgb(118,03,03);
+  cursor:pointer;
+}
+div.comment div.button div.b:hover{
+  border-bottom:2px solid rgb(118,03,03);
+  margin-top:1px;
+}
+div.comment div.button div.b:active{
+  border-top:2px solid rgb(118,03,03);
+  border-bottom:none;
+  margin-top:1px;
 }
 
 </style>
@@ -127,8 +195,8 @@ article div.links div.link div label{
 		<div class="bg-img"><img data-src='/images/cover.jpg' id='background'/></div>
 		<div class="title">
 			<h1>The Craft of Tea</h1>
-			<p class="subline">An Exploration of Tea Blending</p>
-      <p>by <strong>Hunter Larco</strong> &#8212; founded on <strong>September 2, 2014</strong></p>
+			<p class="subline">{{post.title}}</p>
+      <p>by <strong>{{post.author}}</strong> &#8212; written on <strong>{{post.date|date:"F d, Y"}}</strong></p>
 		</div>
 	</header>
   <button class="trigger" data-info="Scroll Down or Click Here"><span>Trigger</span></button>
@@ -136,23 +204,28 @@ article div.links div.link div label{
 		<div>
       
 			{{post.content|safe}}
-      <p class='date'>{{post.date|date:"F d, Y"}}</p>
+      <p class='date'>Comments</p>
       
       <div class='links'>
         {% if not post.prev %}
-        <div class='link'></div>
+        <div class='link first'></div>
         {% else %}
-        <a href='/{{post.prev}}'><div class='link'><div><label>prev</label></div></div></a>
+        <a href='/{{post.prev}}#ref'><div class='link first'><div><label>prev</label></div></div></a>
         {% endif %}
         {% if not post.next %}
-        <div class='link'></div>
+        <div class='link last'></div>
         {% else %}
-        <a href='/{{post.next}}'><div class='link'><div><label>next</label></div></div></a>
+        <a href='/{{post.next}}#ref'><div class='link last'><div><label>next</label></div></div></a>
         {% endif %}
         <div class='clearfix'></div>
       </div>
       
       <div class='comments'>
+        <div class='comment'>
+          <textarea placeholder='Write your comment here.'></textarea>
+          <div class='name'><div class='input'><input placeholder='Name (optional)'/></div></div><!--
+       --><div class='button'><div class='frame'><div class='b'>Comment</div></div></div>
+        </div>
         <div class='comment'>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           <div class='author'>Hunter Larco <label>9.2.2014</label></div>
@@ -333,14 +406,15 @@ window.addEventListener('load', function(){
 		
 		disable_scroll();
 		
-		if( pageScroll ) {
+		if( pageScroll || location.hash == '#ref') {
+      noscroll = false;
 			isRevealed = true;
 			classie.add( container, 'notrans' );
 			classie.add( container, 'modify' );
 		}
-		
-		window.addEventListener( 'scroll', scrollPage );
-		trigger.addEventListener( 'click', function() { toggle( 'reveal' ); } );
+    
+    window.addEventListener( 'scroll', scrollPage );
+    trigger.addEventListener( 'click', function() { toggle( 'reveal' ); } );
 	})();
 </script>
 </body>

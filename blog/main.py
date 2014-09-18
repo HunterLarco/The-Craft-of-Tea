@@ -25,6 +25,8 @@ class PostHandler(webapp2.RequestHandler):
     template_values = {
       'post': {
         'content': post.content,
+        'author': post.author,
+        'title': post.title,
         'date': post.created,
         'next': post.next_post,
         'prev': post.prev_post
