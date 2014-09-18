@@ -24,13 +24,7 @@ def require(*keys):
 
 
 
-
-
-
-
-
-
-class Guest:
+class Admin:
   pass
 
 

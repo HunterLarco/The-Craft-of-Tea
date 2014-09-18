@@ -21,12 +21,14 @@ handlers:
 
 # api handlers
 - url: /([^/]+)/([^/]+)
-  script: app.app
+  script: main.app
+  login: admin
 
 # default page
 - url: .*
   static_files: urls.html
   upload: urls.html
+  login: admin
 
 
 
