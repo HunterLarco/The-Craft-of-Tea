@@ -1,0 +1,307 @@
+<!DOCTYPE>
+<html>
+<head>
+<style type='text/css'>
+
+body{
+  font-family:'Helvetica';
+  font-size:15px;
+}
+
+
+div.title{
+  padding:16px 0px;
+  text-align:center;
+  font-size:18px;
+  background:rgb(203,78,78);
+  color:rgb(255,255,255);
+  border-bottom:1px solid rgb(153,28,28);
+}
+
+
+div.editor{
+  position:fixed;
+  top:0px;
+  left:0px;
+  width:50%;
+  height:100%;
+  overflow:scroll;
+  background:rgb(230,230,230);
+}
+
+
+div.preview{
+  position:fixed;
+  top:0px;
+  right:0px;
+  width:50%;
+  height:100%;
+  overflow:scroll;
+}
+
+
+div.preview div.buttons{
+  position:absolute;
+  bottom:0px;
+  left:0px;
+  right:0px;
+  padding:20px 26px;
+  background:rgb(203,78,78);
+  border-top:1px solid rgb(153,28,28);
+  text-align:right;
+}
+div.preview div.buttons div.button{
+  margin:0px 4px;
+  padding:7px 11px;
+  color:rgb(255,255,255);
+  vertical-align:top;
+  display:inline-block;
+  background:rgb(158,33,33);
+  -webkit-border-radius: 2px;
+  -moz-border-radius:    2px;
+  border-radius:         2px;
+  border-bottom:3px solid rgb(123,0,0);
+  cursor:pointer;
+}
+div.preview div.buttons div.button:hover{
+  border-bottom:2px solid rgb(123,0,0);
+  margin-top:1px;
+}
+div.preview div.buttons div.button:active{
+  border-top:2px solid rgb(123,0,0);
+  border-bottom:none;
+  margin-top:1px;
+}
+div.preview div.buttons div.info:after{
+  float:left;
+  font-size:12px;
+  color:rgb(210,180,180);
+  display:inline-block;
+  line-height:40px;
+  margin-right:15px;
+}
+div.preview div.buttons div.saving:after{
+  content:'draft saved';
+}
+div.preview div.buttons div.saving.working:after{
+  color:rgb(255,250,250);
+  content:'saving draft';
+}
+div.preview div.buttons div.published:after{
+  content:'pusblished';
+}
+div.preview div.buttons div.published.not:after{
+  content:'not published';
+}
+
+
+div.preview div.content{
+  position:absolute;
+  top:54px;
+  bottom:81px;
+  left:0px;
+  right:0px;
+  overflow:scroll;
+  padding:20px;
+  line-height:24px;
+  font-size:16px;
+  font-family:'Helvetica';
+  font-weight:300;
+}
+div.preview div.content blockquote{
+  font-family: 'Lora', serif;
+  font-style:italic;
+  color:rgb(51,51,51);
+  font-size:20px;
+}
+div.preview div.content blockquote:before{
+	content: '\201C';
+}
+div.preview div.content blockquote:after{
+	content: '\201D';
+}
+div.preview div.content p.date{
+  font-size:14px;
+  text-align:center;
+  margin:50px 0px;
+}
+
+
+div.editor div.subtitle{
+  padding:9px 12px;
+  border-bottom:1px solid rgb(51,51,51);
+  background:rgb(71,71,71);
+  font-size:14px;
+  color:rgb(200,200,200);
+}
+div.editor div.subtitle label{
+  color:rgb(140,140,140);
+  margin-right:20px;
+}
+div.editor div.subtitle span{
+  padding:0px 4px;
+}
+
+
+div.editor .code{
+  position:absolute;
+  top:89px;
+  left:0px;
+  width:100%;
+  bottom:0px;
+  padding:20px;
+  border:none;
+  outline:none;
+  background:rgb(31,31,31);
+  color:rgb(225,225,225);
+  line-height:24px;
+  letter-spacing:1px;
+  font-weight:300;
+  resize:none;
+}
+
+
+div.editor div.tagerror{
+  position:absolute;
+  bottom:0px;
+  left:0px;
+  right:0px;
+  background:rgb(31,31,31);
+  color:rgb(255,0,0);
+  text-align:center;
+  padding:20px 0px;
+  display:none;
+}
+div.editor div.tagerror.show{
+  display:block;
+}
+
+</style>
+<meta charset='UTF-8' NAME='Author' CONTENT='Hunter Larco' />
+
+<title>Create New Post</title>
+
+<link rel="stylesheet" type="text/css" href="/resources/css/reset.css"></link>
+
+<script src='/resources/scripts/request.js'></script>
+<script src='/resources/scripts/classie.js'></script>
+
+</head>
+<body>
+
+
+<div class='editor'>
+  <div class='title'>Editor</div>
+  <div class='subtitle' id='acceptabletags'></div>
+  <textarea class='code' id='editor'><p>Your preview will appear here, simply type your <i>html</i> into the editor to the left and it will auto update and save your draft here.</p></textarea>
+  <div class='tagerror' id='illegaltagerror'>Illegal Tags Were Removed From This Post</div>
+</div>
+<div class='preview'>
+  <div class='title'>Preview</div>
+  <div class='content' id='preview'></div>
+  <div class='buttons'>
+    <div class='info published not'></div>
+    <div class='info saving'></div>
+    <div class='button' id='publish'>Delete Draft</div>
+    <div class='button' id='publish'>Publish &amp; Delete Draft</div>
+  </div>
+</div>
+
+
+<script type='text/javascript'>
+
+(function(){
+  
+  window.onload = OnWindowLoad;
+  
+  
+  function OnWindowLoad(){
+    BindTextarea();
+  }
+  
+  
+  // ---------------- BEGINNING OF TEXTAREA CODE ---------------- \\
+  
+  var editor, preview, illegaltagerror;
+  
+  var acceptabletags = ['p','i','b','blockquote'];
+  
+  function BindTextarea(){
+    editor = document.getElementById('editor');
+    preview = document.getElementById('preview');
+    illegaltagerror = document.getElementById('illegaltagerror')
+    
+    // create subtitle with acceptable tags
+    CreateSubtitle();
+    
+    // initial update
+    UpdateCode();
+    
+    // create listener to update preview and save the draft
+    editor.addEventListener('keyup', UpdateCode);
+    
+  }
+  
+  function UpdateCode(){
+    var stat = RemoveIllegalTags(editor.value),
+        value = stat.value;
+    
+    // if there were illegal tags, show an error
+    if(stat.changed)
+      classie.add(illegaltagerror, 'show');
+    else
+      classie.remove(illegaltagerror, 'show');
+    
+    preview.innerHTML = value + AddDateStamp();
+  }
+  function RemoveIllegalTags(html){
+    // resursively reads html tree and replaces unacceptable tags with text nodes
+    // containing their content. It works from the ends of the tree up so that nested
+    // nodes are fixed before their parents.
+    
+    var dom = document.createElement('body');
+    dom.innerHTML = html;
+    
+    var changed = false;
+    
+    function Recurse(parent){
+      var children_copy = [].slice.call(parent.children, 0);
+      for(var i=0,node; node=children_copy[i++];){
+        Recurse(node);
+        if(acceptabletags.indexOf(node.tagName.toLowerCase()) == -1){
+          parent.replaceChild(document.createTextNode(node.innerHTML), node);
+          changed = true;
+        }
+      }
+    }
+    Recurse(dom);
+    
+    return {
+      'value': dom.innerHTML,
+      'changed': changed
+    };
+  }
+  function AddDateStamp(){
+    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'],
+        now = new Date();
+    return '\<p class="date">'+months[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear()+'\</p>';
+  }
+  
+  function CreateSubtitle(){
+    var sub = document.getElementById('acceptabletags');
+    
+    var label = document.createElement('label');
+    label.innerHTML = 'Acceptable Tags :';
+    sub.appendChild(label);
+    
+    sub.innerHTML += '\<span>'+acceptabletags.join('\</span>\<span>')+'\</span>';
+  }
+  
+  // ---------------- END OF TEXTAREA CODE ---------------- \\
+  
+  
+})();
+
+</script>
+</body>
+</html>
