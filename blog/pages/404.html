@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<style>
+
+body {
+	background: rgb(10,10,10);
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	overflow-x: hidden;
+}
+
+
+div.content{
+  position:fixed;
+  top:0px;
+  left:0px;
+  right:0px;
+  bottom:0px;
+  overflow:hidden;
+	color: rgb(230,230,230);
+	font-weight: 400;
+	font-size: 22px;
+	line-height: 1.5;
+	font-family: 'Raleway', Arial, sans-serif;
+}
+div.content img.background{
+  position:absolute;
+  left:0px;
+  top:0px;
+  width:100%;
+}
+div.content div.letter{
+  position:absolute;
+  left:0px;
+  top:0px;
+  right:0px;
+  bottom:0px;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-pack: center;
+  -moz-box-align: center;
+  display: box;
+  box-orient: horizontal;
+  box-pack: center;
+  box-align: center;
+}
+div.letter div.shadow{
+  background:rgba(0,0,0,0.8);
+  -webkit-border-radius: 100px;
+  -moz-border-radius:    100px;
+  border-radius:         100px;
+  text-align:center;
+  padding:30px;
+}
+div.letter h1{
+  margin:0px;
+  padding:20px 0px;
+}
+div.letter p{
+  margin:0px;
+  padding:7px 0px;
+}
+div.letter a{
+  text-decoration:none;
+  color:rgb(255,255,255);
+  font-weight:bold;
+}
+
+</style>
+<html lang='en'>
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+<meta name="Author" content="Hunter John Larco"/>
+
+<title>The Craft of Tea | 404</title>
+
+<!-- **************** favicon **************** -->
+<link rel='shortcut icon' type='image/x-icon' href='/images/favicon.ico' />
+
+<!-- **************** fonts **************** -->
+<link rel='stylesheet' href='/resources/fonts/raleway/typeface.css'/>
+
+<!-- **************** stylesheets **************** -->
+<link rel='stylesheet' href='/resources/css/reset.css'/>
+
+</head>
+<body>
+
+
+<div class='content'>
+  <img class='background' src='/images/404.jpg'/>
+  <div class='letter'>
+    <div class='shadow'>
+      <h1>Error 404</h1>
+      <p>You've gotten lost, but don't worry. Here's a nice cup of tea.</p>
+      <p>When you're done with that, <a href='/'>let me bring you back</a>.</p>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
