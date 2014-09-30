@@ -194,6 +194,10 @@ div.console div.content{
   right:280px;
   font-family: droid sans mono,monospace,courier new,courier,sans-serif;
   font-size:14px;
+  line-height:20px;
+}
+div.console div.content label.error{
+  color:rgb(200,0,0);
 }
 
 
@@ -352,17 +356,23 @@ div.settings div.frame{
   <div class='title'>History</div>
   <div class='new'>Create New Crawl</div>
   <div class='line'></div>
+  
+  {% for crawl in crawls %}
   <div class='crawl'>
-    <div class='button'>teavana.com<div>Sept. 14, 2014</div></div>
+    <div class='button'>{{crawl.domain}}<div>{{crawl.queueddate|date:"N j, Y"}}</div></div>
     <div class='preview'>
       <div class='frame'>
-        <div class='title'>http://teavana.com/the-teas/</div>
+        <div class='title'>{{crawl.domain}}</div>
         <h2>Settings</h2>
-        <div class='item'><label>subdomains</label> www</div>
-        <div class='item'><label>url match</label> /the-teas/[^/]+/?</div>
-        <div class='item'><label>map naked domain to www</label> true</div>
-        <div class='item'><label>strip url parameters</label> true</div>
+        <div class='item'><label>url match</label> {{crawl.urlmatch}}</div>
+        <div class='item'><label>subdomain pattern</label> {{crawl.includedsubdomains}}</div>
+        <div class='item'><label>excluded subdomain pattern</label> {{crawl.excludedsubdomains}}</div>
+        <div class='item'><label>mimetype pattern</label> {{crawl.includedmimetypes}}</div>
+        <div class='item'><label>excluded mimetype pattern</label> {{crawl.excludedmimetypes}}</div>
+        <div class='item'><label>map naked domain to www</label> {{crawl.mapnakeddomains}}</div>
+        <div class='item'><label>strip url parameters</label> {{crawl.stripurls}}</div>
         <h2>Metadata</h2>
+        <b>TODO</b>
         <div class='item'><label>completed</label> false</div>
         <div class='item'><label>queued tasks</label> 149</div>
         <div class='item'><label>completed tasks</label> 121</div>
@@ -373,111 +383,8 @@ div.settings div.frame{
       </div>
     </div>
   </div>
-  <div class='crawl'>
-    <div class='button'>teavana.com<div>Sept. 14, 2014</div></div>
-    <div class='preview'>
-      <div class='frame'>
-        <div class='title'>http://teavana.com/the-teas/</div>
-        <h2>Settings</h2>
-        <div class='item'><label>subdomains</label> www</div>
-        <div class='item'><label>url match</label> /the-teas/[^/]+/?</div>
-        <div class='item'><label>map naked domain to www</label> true</div>
-        <div class='item'><label>strip url parameters</label> true</div>
-        <h2>Metadata</h2>
-        <div class='item'><label>completed</label> false</div>
-        <div class='item'><label>queued tasks</label> 149</div>
-        <div class='item'><label>completed tasks</label> 121</div>
-        <div class='item'><label>active tasks</label> 28</div>
-        <div class='item'><label>matches</label> 149</div>
-        <div class='item'><label>file size</label> 8 kb</div>
-        <div class='item'><label>run time</label> Sept. 4, 2014 13:00</div>
-      </div>
-    </div>
-  </div>
-  <div class='crawl'>
-    <div class='button'>teavana.com<div>Sept. 14, 2014</div></div>
-    <div class='preview'>
-      <div class='frame'>
-        <div class='title'>http://teavana.com/the-teas/</div>
-        <h2>Settings</h2>
-        <div class='item'><label>subdomains</label> www</div>
-        <div class='item'><label>url match</label> /the-teas/[^/]+/?</div>
-        <div class='item'><label>map naked domain to www</label> true</div>
-        <div class='item'><label>strip url parameters</label> true</div>
-        <h2>Metadata</h2>
-        <div class='item'><label>completed</label> false</div>
-        <div class='item'><label>queued tasks</label> 149</div>
-        <div class='item'><label>completed tasks</label> 121</div>
-        <div class='item'><label>active tasks</label> 28</div>
-        <div class='item'><label>matches</label> 149</div>
-        <div class='item'><label>file size</label> 8 kb</div>
-        <div class='item'><label>run time</label> Sept. 4, 2014 13:00</div>
-      </div>
-    </div>
-  </div>
-  <div class='crawl'>
-    <div class='button'>teavana.com<div>Sept. 14, 2014</div></div>
-    <div class='preview'>
-      <div class='frame'>
-        <div class='title'>http://teavana.com/the-teas/</div>
-        <h2>Settings</h2>
-        <div class='item'><label>subdomains</label> www</div>
-        <div class='item'><label>url match</label> /the-teas/[^/]+/?</div>
-        <div class='item'><label>map naked domain to www</label> true</div>
-        <div class='item'><label>strip url parameters</label> true</div>
-        <h2>Metadata</h2>
-        <div class='item'><label>completed</label> false</div>
-        <div class='item'><label>queued tasks</label> 149</div>
-        <div class='item'><label>completed tasks</label> 121</div>
-        <div class='item'><label>active tasks</label> 28</div>
-        <div class='item'><label>matches</label> 149</div>
-        <div class='item'><label>file size</label> 8 kb</div>
-        <div class='item'><label>run time</label> Sept. 4, 2014 13:00</div>
-      </div>
-    </div>
-  </div>
-  <div class='crawl'>
-    <div class='button'>teavana.com<div>Sept. 14, 2014</div></div>
-    <div class='preview'>
-      <div class='frame'>
-        <div class='title'>http://teavana.com/the-teas/</div>
-        <h2>Settings</h2>
-        <div class='item'><label>subdomains</label> www</div>
-        <div class='item'><label>url match</label> /the-teas/[^/]+/?</div>
-        <div class='item'><label>map naked domain to www</label> true</div>
-        <div class='item'><label>strip url parameters</label> true</div>
-        <h2>Metadata</h2>
-        <div class='item'><label>completed</label> false</div>
-        <div class='item'><label>queued tasks</label> 149</div>
-        <div class='item'><label>completed tasks</label> 121</div>
-        <div class='item'><label>active tasks</label> 28</div>
-        <div class='item'><label>matches</label> 149</div>
-        <div class='item'><label>file size</label> 8 kb</div>
-        <div class='item'><label>run time</label> Sept. 4, 2014 13:00</div>
-      </div>
-    </div>
-  </div>
-  <div class='crawl'>
-    <div class='button'>teavana.com<div>Sept. 14, 2014</div></div>
-    <div class='preview'>
-      <div class='frame'>
-        <div class='title'>http://teavana.com/the-teas/</div>
-        <h2>Settings</h2>
-        <div class='item'><label>subdomains</label> www</div>
-        <div class='item'><label>url match</label> /the-teas/[^/]+/?</div>
-        <div class='item'><label>map naked domain to www</label> true</div>
-        <div class='item'><label>strip url parameters</label> true</div>
-        <h2>Metadata</h2>
-        <div class='item'><label>completed</label> false</div>
-        <div class='item'><label>queued tasks</label> 149</div>
-        <div class='item'><label>completed tasks</label> 121</div>
-        <div class='item'><label>active tasks</label> 28</div>
-        <div class='item'><label>matches</label> 149</div>
-        <div class='item'><label>file size</label> 8 kb</div>
-        <div class='item'><label>run time</label> Sept. 4, 2014 13:00</div>
-      </div>
-    </div>
-  </div>
+  {% endfor %}
+  
 </div>
 
 
@@ -494,29 +401,29 @@ div.settings div.frame{
     <div class='title'>Crawl Settings</div>
     <div class='frame scrollable'>
       <div class='inputs'>
-        <div class='input'>base url <input            type='text' placeholder='https://teavana.com/the-teas/' id='settings_domain' /></div>
-        <div class='input'>url match <input           type='text' placeholder='regex' value='.*'      id='settings_umatch' /></div>
-        <div class='input'>included subdomains <input type='text' placeholder='regex' value='.*'      id='settings_isub'   /></div>
-        <div class='input'>excluded subdomains <input type='text' placeholder='regex'                 id='settings_esub'   /></div>
-        <div class='input'>included mimetypes <input  type='text' placeholder='regex' value='.*'      id='settings_imime'  /></div>
-        <div class='input'>excluded mimetypes <input  type='text' placeholder='regex'                 id='settings_emime'  /></div>
+        <div class='input'>base url <input type='text' placeholder='https://teavana.com/the-teas/' id='settings_domain' /></div>
+        <div class='input'>url match <input type='text' placeholder='regex' value='^.*$' id='settings_umatch' /></div>
+        <div class='input'>subdomain pattern <input type='text' placeholder='regex' value='^.*$' id='settings_isub'   /></div>
+        <div class='input'>excluded subdomain pattern <input type='text' placeholder='regex' id='settings_esub'   /></div>
+        <div class='input'>mimetype pattern <input type='text' placeholder='regex' value='^.*$' id='settings_imime'  /></div>
+        <div class='input'>excluded mimetype pattern <input type='text' placeholder='regex' id='settings_emime'  /></div>
       </div>
       <div class='checkboxes'>
         <div class='checkbox'>
           <div class='bool'>
-            <input type='checkbox' checked id='mapnakeddomains'/>
+            <input type='checkbox' checked id='settings_mapnakeddomains'/>
             <div class='t'>true</div>
             <div class='f'>false</div>
           </div> map naked domain to www
         </div>
         <div class='checkbox'>
           <div class='bool'>
-            <input type='checkbox' checked id='stripurls'/>
+            <input type='checkbox' checked id='settings_stripurls'/>
             <div class='t'>true</div>
             <div class='f'>false</div>
           </div> strip url parameters
         </div>
-        <div class='button'>Queue Crawl</div>
+        <div class='button' id='settings_button'>Queue Crawl</div>
       </div>
     </div>
   </div>
@@ -532,11 +439,9 @@ div.settings div.frame{
       <div class='item'><label>file size</label> 8 kb</div>
       <div class='item'><label>run time</label> Sept. 4, 2014 13:00</div>
     </div>
-    <div class='content scrollable'>
-      crawling over teavana.com<br/>
-      pending thios
-    </div>
+    <div class='content scrollable' id='console'></div>
   </div>
+  
 </div>
 
 
@@ -561,12 +466,96 @@ div.settings div.frame{
 
 
 <script type='text/javascript'>
-
-
-
-
-
-
+(function(){
+  
+  var elements;
+  
+  function LoadElements(){
+    elements = {
+      'settings': {
+        'inputs': {
+          'domain': document.getElementById('settings_domain'),
+          'urlmatch': document.getElementById('settings_umatch'),
+          'includedsubdomains': document.getElementById('settings_isub'),
+          'excludedsubdomains': document.getElementById('settings_esub'),
+          'includedmimetypes': document.getElementById('settings_imime'),
+          'excludedmimetypes': document.getElementById('settings_emime')
+        },
+        'checkboxes': {
+          'mapnakeddomains': document.getElementById('settings_mapnakeddomains'),
+          'stripurls': document.getElementById('settings_stripurls')
+        },
+        'button': document.getElementById('settings_button')
+      }
+    }
+  }
+  
+  
+  
+  window.addEventListener('load', function(){
+    LoadElements();
+    BindQueueButton();
+  });
+  
+  
+  
+  
+  function BindQueueButton(){
+    elements.settings.button.addEventListener('click', QueueCrawl);
+  }
+  function QueueCrawl(){
+    var crawl;
+    try{
+      crawl = new Crawl(
+        elements.settings.inputs.domain.value,
+        elements.settings.inputs.urlmatch.value,
+        elements.settings.inputs.includedsubdomains.value,
+        elements.settings.inputs.excludedsubdomains.value,
+        elements.settings.inputs.includedmimetypes.value,
+        elements.settings.inputs.excludedmimetypes.value,
+        elements.settings.checkboxes.mapnakeddomains.checked,
+        elements.settings.checkboxes.stripurls.checked
+      );
+    }catch(e){
+      LogError(e);
+      return;
+    }
+    crawl.addEventListener('queue', function(){Log('Queue Request Recieved');});
+    crawl.addEventListener('log', Log);
+    crawl.addEventListener('page', PageRecieved);
+    crawl.queue();
+    Log('Crawl Request Sent');
+  }
+  function DisableSettings(){
+    for(var key in elements.settings.inputs)
+      elements.settings.inputs[key].disabled = true;
+    for(var key in elements.settings.checkboxes)
+      elements.settings.checkboxes[key].disabled = true;
+    classie.add(elements.settings.button, 'disabled');
+  }
+  
+  
+  function FormatLogMessage(message){
+    return message.replace(/\n/g, '\</br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')+'\<br>';
+  }
+  function Log(message){
+    document.getElementById('console').innerHTML += FormatLogMessage(message);
+  }
+  function LogError(message){
+    document.getElementById('console').innerHTML += '\<label class="error">'+FormatLogMessage(message)+'\</label>';
+  }
+  
+  
+  var pages = {};
+  
+  function PageRecieved(data){
+    pages[data.url] = data.text;
+    Log('\tPage '+data.url+' Recieved');
+    window.pages = pages;
+  }
+  
+  
+})();
 </script>
 </body>
 </html>

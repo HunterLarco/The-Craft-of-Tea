@@ -13,6 +13,16 @@ class Url(object):
     )
 
 
+  def matchesUrl(self, regex_str):
+    import re
+    return re.match(re.compile(regex_str), self.components['path']) != None
+  
+  
+  def matchesSubdomain(self, regex_str):
+    import re
+    return re.match(re.compile(regex_str), '.'.join(self.components['subdomains'])) != None
+  
+
   def mapNaked(self):
     if len(self.components['subdomains']) == 0:
       self.components['subdomains'].append('www')
@@ -32,3 +42,8 @@ class Url(object):
       self.components['params'],
       self.components['hash']
     )
+  
+  
+  def get(self):
+    import urllib2
+    return urllib2.urlopen(self.url())
