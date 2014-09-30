@@ -21,6 +21,28 @@ class Post(ndb.Model):
   prev_post = ndb.IntegerProperty()
   next_post = ndb.IntegerProperty()
   
+  def edit(self, content, author=None, title=None):
+    self.content = content
+    if author:
+      self.author = author
+    if title:
+      self.title = title
+    self.put()
+    
+  
+  def delete(self):
+    prevpost = self.prev()
+    nextpost = self.next()
+    if prevpost != None:
+      prevpost.next_post = nextpost.id() if nextpost else None
+      prevpost.put()
+    if nextpost != None:
+      nextpost.prev_post = prevpost.id() if prevpost else None
+      nextpost.put()
+    for comment in self.comments():
+      comment.delete()
+    self.key.delete()
+  
   def comments(self):
     import comments
     return comments.fetch(self)
@@ -41,6 +63,22 @@ class Post(ndb.Model):
   
   def id(self):
     return self.key.id()
+  
+  def toDict(self):
+    return {
+      'identifier': self.id(),
+      'content': self.content,
+      'author': self.author,
+      'title': self.title,
+      'date': self.created,
+      'next': self.next_post,
+      'prev': self.prev_post,
+      'comments': [{
+        'handle':comment.handle,
+        'date': comment.created,
+        'content':comment.content
+      } for comment in self.comments()]
+    }
 
 
 """
@@ -98,6 +136,18 @@ def getNewest():
 
 """
 ' PURPOSE
+'   Returns all the current posts ordered by their creation date
+' PARAMETERS
+'   Nothing
+' RETURNS
+'   A list of <Post extends ndb.Model>
+"""
+def all():
+  return Post.query().order(-Post.created).fetch()
+
+
+"""
+' PURPOSE
 '   Returns the post corresponding with the given identifier (post id)
 '   if no id is provided, it returns the most recently written post.
 ' PARAMETERS
@@ -109,7 +159,7 @@ def get(identifier=None):
   if identifier == None:
     return getNewest()
   try:
-    post = Post.get_by_id(identifier)
+    post = Post.get_by_id(int(identifier))
   except:
     return None
   return post

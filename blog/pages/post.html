@@ -19,10 +19,14 @@ header.header div.title h1{
   font-weight:400;
   font-size:70px;
 }
-article.content p.date{
+article.content p.footer{
   padding:70px 0px;
   text-align:center;
   font-size:15px;
+}
+article div.post a{
+  text-decoration: none;
+  color: rgb(188,63,63);
 }
 
 
@@ -213,8 +217,8 @@ div.comments div.error.show{
 		<div class="bg-img"><img data-src='/images/cover.jpg' id='background'/></div>
 		<div class="title">
 			<h1>The Craft of Tea</h1>
-			<p class="subline">{{post.title}}</p>
-      <p>by <strong>{{post.author}}</strong> &#8212; written on <strong>{{post.date|date:"F d, Y"}}</strong></p>
+			<p class="subline">{{post.title|safe}}</p>
+      <p>by <strong>{{post.author|safe}}</strong> &#8212; written on <strong>{{post.date|date:"F d, Y"}}</strong></p>
 		</div>
 	</header>
   
@@ -223,8 +227,8 @@ div.comments div.error.show{
 	<article class="content">
 		<div>
       
-			{{post.content|safe}}
-      <p class='date'>Comments</p>
+			<div class='post'>{{post.content|safe}}</div>
+      <p class='footer'>Comments</p>
       
       <div class='links'>
         {% if not post.prev %}

@@ -52,6 +52,24 @@ class Admin:
   
   class post:
     
+    @require('identifier')
+    def delete(self, payload):
+      from ..blog import posts
+      post = posts.get(payload['identifier'])
+      if post == None:
+        return response.throw(200, data_struct=identifier)
+      post.delete()
+    
+    
+    @require('content', 'title', 'author', 'identifier')
+    def update(self, payload):
+      from ..blog import posts
+      post = posts.get(payload['identifier'])
+      if post == None:
+        return response.throw(200, data_struct=identifier)
+      post.edit(payload['content'], author=payload['author'], title=payload['title'])
+    
+    
     @require('content', 'title', 'author')
     def create(self, payload):
       from ..blog import posts

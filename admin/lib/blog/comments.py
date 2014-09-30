@@ -17,6 +17,15 @@ class Comment(ndb.Model):
   content = ndb.TextProperty()
   handle = ndb.StringProperty()
 
+  def id(self):
+    return self.key.id()
+  
+  def reply(self, *args, **kwargs):
+    return create(self, *args, **kwargs)
+  
+  def replies(self, *args, **kwargs):
+    return fetch(self, *args, **kwargs)
+
 
 """
 ' PURPOSE

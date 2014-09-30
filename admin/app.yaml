@@ -13,21 +13,10 @@ handlers:
 - url: /resources
   static_dir: resources
 
-# tools pages
-- url: /([^/]+)
-  static_files: tools/\1.html
-  upload: tools/([^/]+).html
-  login: admin
-
 # api handlers
-- url: /([^/]+)/([^/]+)
+- url: .*
   script: main.app
   login: admin
-
-# default page
-- url: .*
-  static_files: urls.html
-  upload: urls.html
 
 libraries:
 - name: webapp2

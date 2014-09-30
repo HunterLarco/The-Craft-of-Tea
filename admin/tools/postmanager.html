@@ -1,0 +1,126 @@
+<!DOCTYPE>
+<html>
+<head>
+<style type='text/css'>
+
+body{
+  font-family:'Helvetica';
+  font-size:15px;
+}
+
+
+div.title{
+  padding:16px 0px;
+  text-align:center;
+  font-size:18px;
+  background:rgb(203,78,78);
+  color:rgb(255,255,255);
+  border-bottom:1px solid rgb(153,28,28);
+}
+
+
+div.posts{
+  position:fixed;
+  top:0px;
+  left:0px;
+  width:100%;
+  height:100%;
+  overflow:scroll;
+  background:rgb(230,230,230);
+}
+
+
+
+div.post{
+  margin:20px auto;
+  background:rgb(255,255,255);
+  box-shadow:0px 4px 7px rgba(0,0,0,0.15);
+  width:400px;
+}
+div.post:first-child{
+  margin-top:30px;
+}
+div.post:last-child{
+  margin-bottom:30px;
+}
+div.post label{
+  color:rgb(150,150,150);
+}
+div.post span{
+  display:block;
+  font-size:12px;
+  padding-top:2px;
+  text-align:right;
+}
+div.post div.content{
+  padding:20px 22px;
+  text-align:center;
+}
+div.post div.content div.h1{
+  font-size:16px;
+}
+div.post div.content div.h2{
+  font-size:14px;
+  padding-top:2px;
+}
+div.post div.buttons{
+  background:rgb(61,61,61);
+  text-align:right;
+}
+div.post div.buttons a{
+  display:inline-block;
+  padding:8px 12px;
+  text-decoration:none;
+  font-size:14px;
+  color:rgb(220,220,220);
+  cursor:pointer;
+}
+div.post div.buttons a:hover{
+  background:rgb(81,81,81);
+  color:rgb(240,240,240);
+}
+
+
+</style>
+<meta charset='UTF-8' NAME='Author' CONTENT='Hunter Larco' />
+
+<title>Post Manager</title>
+
+<link rel="stylesheet" type="text/css" href="/resources/css/reset.css"></link>
+
+</head>
+<body>
+
+
+<div class='posts'>
+  <div class='title'>Posts</div>
+  <div>
+    
+    {% for post in posts %}
+    <div class='post'>
+      <div class='content'>
+        <div class='h1'>{{post.title|safe}}</div>
+        <div class='h2'><label>written by</label> {{post.author|safe}}</div>
+        <div class='h2'>{{post.comments|length}} Comments</div>
+        <span>{{post.date|date:"N j, Y g:i A"}}</span>
+      </div>
+      <div class='buttons'>
+        <a href='/manager/edit/{{post.identifier|safe}}'>Edit Post</a>
+        <a href='/manager/delete/{{post.identifier|safe}}'>Delete Post</a>
+      </div>
+    </div>
+    {% endfor %}
+    
+    {% if posts|length == 0 %}
+    <div class='post'>
+      <div class='content'>There Are No Posts</div>
+    </div>
+    {% endif %}
+    
+  </div>
+</div>
+
+
+<script type='text/javascript'></script>
+</body>
+</html>
